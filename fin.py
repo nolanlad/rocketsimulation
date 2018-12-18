@@ -32,6 +32,12 @@ class Triangle:
         can be distributed to each point in a Triangle '''
         return Triangle(value @ self.p1, value @ self.p2, value @ self.p3)
 
+
+def trimul(mat,T):
+    '''multiply each point in triangle "T" by the matrix "mat" '''
+    return Triangle(mat @T.p1, mat @T.p2, mat @T.p3)
+
+
 def mag(v):
     '''magnitude of a vector '''
     return np.sqrt(np.dot(v,v))
@@ -91,20 +97,19 @@ def example():
     T = Triangle([0,0,0],[0,1,0],[0,0,1])
     rot45 = rot([0,1,0],np.pi/4.)
     rot90 = rot([0,1,0],np.pi/2.)
-    T45 = T@rot45
-    T90 = T@rot90
+    T45 = trimul(rot45,T)
+    T90 = trimul(rot90,T)
     T.plot()
     T45.plot()
     T90.plot()
     plt.show()
     down = normal_plane([0,0,1]) # project looking up the z axis
-    T45_flat = T45@down
-    T90_flat = T90@down
-    T_flat   = T@down
+    T45_flat = trimul(down,T45)
+    T90_flat = trimul(down,T90)
+    T_flat   = trimul(down,T)
     print("the area of T is %f"%(T_flat.area()))
     print("the area of T45 is %f"%(T45_flat.area()))
     print("the area of T90 is %f"%(T90_flat.area()))
 
 
 
-example()
