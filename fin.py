@@ -37,6 +37,12 @@ def trimul(mat,T):
     '''multiply each point in triangle "T" by the matrix "mat" '''
     return Triangle(mat @T.p1, mat @T.p2, mat @T.p3)
 
+def triadd(v,T):
+    ''' add vector v to each point in a triangle
+    good for translating shapes'''
+    return Triangle(np.add(v,T.p1), np.add(v,T.p2), np.add(v,T.p3))
+    
+
 
 def mag(v):
     '''magnitude of a vector '''
@@ -112,4 +118,17 @@ def example():
     print("the area of T90 is %f"%(T90_flat.area()))
 
 
+def tri_centroid(T):
+    '''
+    find the centroid of a triangle, useful for finding drag force
+    source:
+    https://www.mathopenref.com/coordcentroid.html
+    '''
+    Ox = (T.p1[0] + T.p2[0] + T.p3[0])/3.
+    Oy = (T.p1[1] + T.p2[1] + T.p3[1])/3.
+    Oz = (T.p1[2] + T.p2[2] + T.p3[2])/3.
+    return [Ox, Oy, Oz]
+
+
+    
 
