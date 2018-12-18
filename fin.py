@@ -1,5 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
+
+#drag coefficient of a flat plate
+# source : https://www.grc.nasa.gov/www/k-12/InteractProgs/index.htm
+CD = 1.28 
+
 '''
 the traingle object
 all 2D shapes can be represented as a collection of triangles
@@ -75,7 +80,7 @@ def normal_plane(v):
                 [0, 0, 0 ]])
     else:
         print("you moron, are you actually trying to find the plane normal to a null vector?")
-        return
+        return 0
     
 
 def rot(axis,thet):
@@ -129,6 +134,4 @@ def tri_centroid(T):
     Oz = (T.p1[2] + T.p2[2] + T.p3[2])/3.
     return [Ox, Oy, Oz]
 
-
-    
 
