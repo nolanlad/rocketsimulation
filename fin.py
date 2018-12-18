@@ -28,6 +28,8 @@ class Triangle:
         plt.plot([self.p2[0],self.p3[0]],[self.p2[1],self.p3[1]],'b-')
         
     def __matmul__(self,value):
+        ''' implements the @ operator so that a matrix multiplication
+        can be distributed to each point in a Triangle '''
         return Triangle(value @ self.p1, value @ self.p2, value @ self.p3)
 
 def mag(v):
@@ -85,3 +87,24 @@ def rot(axis,thet):
         [xz*(1 - cost) - y*sint, x*np.sin(thet)+yz*(1 - cost),cost+zz*(1 - cost)]])
 
 
+def example():
+    T = Triangle([0,0,0],[0,1,0],[0,0,1])
+    rot45 = rot([0,1,0],np.pi/4.)
+    rot90 = rot([0,1,0],np.pi/2.)
+    T45 = T@rot45
+    T90 = T@rot90
+    T.plot()
+    T45.plot()
+    T90.plot()
+    plt.show()
+    down = normal_plane([0,0,1]) # project looking up the z axis
+    T45_flat = T45@down
+    T90_flat = T90@down
+    T_flat   = T@down
+    print("the area of T is %f"%(T_flat.area()))
+    print("the area of T45 is %f"%(T45_flat.area()))
+    print("the area of T90 is %f"%(T90_flat.area()))
+
+
+
+example()
