@@ -3,7 +3,12 @@ import matplotlib.pyplot as plt
 
 #drag coefficient of a flat plate
 # source : https://www.grc.nasa.gov/www/k-12/InteractProgs/index.htm
-CD = 1.28 
+# source : https://www.grc.nasa.gov/www/k-12/airplane/kiteincl.html
+CD = 1.28
+
+def drag_force(rho, velocity, drag_coefficient , area):
+    #source : https://en.wikipedia.org/wiki/Drag_equation
+    return 0.5*rho*(velocity**2) * drag_coefficient * area
 
 '''
 the traingle object
@@ -37,8 +42,36 @@ class Triangle:
         can be distributed to each point in a Triangle '''
         return Triangle(value @ self.p1, value @ self.p2, value @ self.p3)
 
+    def __mul__(self,other):
+        return Triangle(other * self.p1, other * self.p2, other * self.p3)
 
-def trimul(mat,T):
+class Fin(list):
+    def __init__(self):
+        super().__init__()
+
+    def area(self):
+        A = 0.0
+        for f in self:
+            A+= f.area()
+        return A
+
+    def centroid(self):
+        centroid = np.zeros(3)
+        for f in self:
+            centroid += tri_centroid(f)*f.area()
+        return centroid
+
+    def plot(self):
+        for f in self:
+            f.plot()
+            
+    
+
+def trimatmul(mat,T):
+    '''multiply each point in triangle "T" by the matrix "mat" '''
+    return Triangle(mat @T.p1, mat @T.p2, mat @T.p3)
+
+def trimul(n,T):
     '''multiply each point in triangle "T" by the matrix "mat" '''
     return Triangle(mat @T.p1, mat @T.p2, mat @T.p3)
 
@@ -132,6 +165,34 @@ def tri_centroid(T):
     Ox = (T.p1[0] + T.p2[0] + T.p3[0])/3.
     Oy = (T.p1[1] + T.p2[1] + T.p3[1])/3.
     Oz = (T.p1[2] + T.p2[2] + T.p3[2])/3.
-    return [Ox, Oy, Oz]
+    return np.array([Ox, Oy, Oz])
 
 
+def make_basic_rocket():
+    fin1 = Triangle([0,0,0],[0,0,1],[0,1,0])
+    fin1 = triadd([0,1,0],fin1)
+    rot90 = rot([0,0,1],np.pi/2)
+    fin2 = trimatmul(rot90,fin1)
+    fin3 = trimatmul(rot90,fin2)
+    fin4 = trimatmul(rot90,fin3)
+    F = Fin()
+    F.append(fin1)
+    F.append(fin2)
+    F.append(fin3)
+    F.append(fin4)
+    F = finadd([0,0,-2],F)
+    rot45 = rot([0,1,0],np.pi/4)
+    
+    return F
+
+def finmatmul(v,F):
+    F2 = Fin()
+    for f in F:
+        F2.append(trimatmul(v,f))
+    return F2
+
+def finadd(v,F):
+    F2 = Fin()
+    for f in F:
+        F2.append(triadd(v,f))
+    return F2
