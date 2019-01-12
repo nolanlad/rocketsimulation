@@ -10,6 +10,18 @@ def drag_force(rho, velocity, drag_coefficient , area):
     #source : https://en.wikipedia.org/wiki/Drag_equation
     return 0.5*rho*(velocity**2) * drag_coefficient * area
 
+
+def fin_drag(F,v):
+    """drag on a fin (F) from velocity vector (v)"""
+    v_normal = normal_plane(v)
+    F_normal = finmatmul(v_normal,F)
+    A_normal = F_normal.area()
+    C_normal = F_normal.centroid()
+    drag = drag_force(1.23,mag(v),CD,A_normal)
+    return C_normal, drag
+    
+    
+
 '''
 the traingle object
 all 2D shapes can be represented as a collection of triangles
