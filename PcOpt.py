@@ -5,7 +5,7 @@ Created on Wed Feb  6 17:16:22 2019
 @author: Adam P, Andrew C
 """
 import numpy as np
-import v1_mars as v1
+import mars_rocketsim as v1
 import RhaoEq as nProf
 import scipy.optimize as opt
 
