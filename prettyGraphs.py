@@ -14,7 +14,7 @@ from mpl_toolkits.mplot3d import Axes3D
 def f(pc,m,d):
     return -alt.pcOpt(pc,m,d)
 
-count = 20
+count = 10
 mass = np.linspace(10,75,count)
 diameter = np.linspace(5.5,8,count)
 allowedMass = []
@@ -22,20 +22,16 @@ pc =  np.zeros((count,count))
 altitude = np.zeros((count,count))
 
 
-c = -1
-t = -1
-for j in diameter:
-    c+=1
-    t=-1
+
+for di,d in enumerate(diameter):
     maxmass = True
-    for i in mass:
-        t += 1
-        cP = opt.fminbound(f,150,600,args=(i,j),xtol = 1)
-        pc[c][t] = cP
-        altitude[c][t] = alt.pcOpt(cP,i,j)     
-        print(t+(c*count))
-        if(altitude[c][t] < 45000 and maxmass):
-            allowedMass.append([j,i]) #alt.pcOpt(cP,i,j,moreData=True)[1]])
+    for mi,m in enumerate(mass):
+        cP = opt.fminbound(f,150,600,args=(m,d),xtol = 1)
+        pc[di][mi] = cP
+        altitude[di][mi] = alt.pcOpt(cP,m,d)     
+        print(mi+(di*count))
+        if(altitude[di][mi] < 45000 and maxmass):
+            allowedMass.append([d,m]) #alt.pcOpt(cP,i,d,moreData=True)[1]])
             maxmass = False
 
 am = np.array(allowedMass)
