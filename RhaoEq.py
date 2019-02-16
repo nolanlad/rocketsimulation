@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import NozzleCreator as nozz
 
 #####Data and Rhao process from http://www.aspirespace.org.uk/downloads/Thrust%20optimised%20parabolic%20nozzle.pdf
-def design(pC):
+def design(pC,disp = False):
     #Data 
     eRat = np.array([3.5,4,5,6,7,8,9,10,20])
     tNData = np.array([19.8,21.6,23,24,24.8,25.3,26,27.2,28.9])
@@ -83,6 +83,8 @@ def design(pC):
         plt.figure(1)
         plt.plot(xNet,yNet)
         plt.plot(xInterp,yInterp)
+    if(disp):
+        print(max(yNet) * 2, "cm chamber/exit diameter", min(yNet)*2, " cm throat diameter", lCh, "cm chamber length")
     return xInterp,yInterp
 
 
