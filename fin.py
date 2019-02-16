@@ -11,13 +11,13 @@ def drag_force(rho, velocity, drag_coefficient , area):
     return 0.5*rho*(velocity**2) * drag_coefficient * area
 
 
-def fin_drag(F,v):
+def fin_drag(F,v,rho):
     """drag on a fin (F) from velocity vector (v)"""
     v_normal = normal_plane(v)
     F_normal = finmatmul(v_normal,F)
     A_normal = F_normal.area()
     C_normal = F_normal.centroid()
-    drag = drag_force(1.23,mag(v),CD,A_normal)
+    drag = drag_force(rho,mag(v),CD,A_normal)
     return C_normal, drag
     
     

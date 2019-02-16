@@ -11,6 +11,7 @@ Adam Poklemba
 from math import pi,pow,exp,sqrt,cos,atan
 import matplotlib.pyplot as plt
 import sys
+import numpy as np
 
 args = sys.argv
 
@@ -189,8 +190,8 @@ def main(thrust,innerRadius,fuel_mass,dry_rocket_mass):
         append_lists()
 
     # print("Apogee = ", round(height_track,3), "meters, or ", round(height_track*meters_to_feet,3), "feet.")
-    print("Max velocity was ", round(velocity_track,3), "meters per second.")
-    plot_plots()
+    #print("Max velocity was ", round(velocity_track,3), "meters per second.")
+    #plot_plots()
     return round(height_track*meters_to_feet,3)
 
 # apogee = main(4400,3.5)
