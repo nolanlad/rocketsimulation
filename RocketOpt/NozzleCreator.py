@@ -9,7 +9,6 @@ EXIT AREA OFF FROM BOOK BY 4%
 import numpy as np
 k = 1.1409 #dimensionless cnst ratio of specific heats of gas mixture
 pOut = .079154  * 10**6 #0.101325 * 10**6 #pressure at exit of nozzle in mpa
-#pChamber = 500 * 6894.76 #np.array([100,200,300,400,500]) * (0.00689476)  * 10**6  #first number is in psi
 desiredThrust = 3114 #Newtons
 thrustCorrectionFactor = .75
 g=9.8

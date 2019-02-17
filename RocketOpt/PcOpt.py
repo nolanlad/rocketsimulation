@@ -21,10 +21,6 @@ def pcOpt(cPress,mass,diameter,moreData = False):
     MR = 2.6 #mixture ratio = mdot_o/mdot_f @Pc=25atm #http://www.braeunig.us/space/comb-OM.htm
     
     parameters,values = [],[]
-    #pcD = np.array([200,400,600,800,1000]) data for cnst o/f of 2.8
-    #IspD = np.array([2479.3,2736.5,2863.9,2945.6,3004.6])
-    #f = np.polyfit(pcD,IspD,4)
-    #q = np.poly1d(f) #polynomial least squares fit
     
     IspD2 = np.array([2169.8,2472.9,2624.9,2721.5,2790.9,2844.2,2887.1,2922.8,2953.2,2979.6]) # ISP CEA data
     pcD2 = np.array([100,200,300,400,500,600,700,800,900,1000])
