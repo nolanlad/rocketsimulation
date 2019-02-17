@@ -190,7 +190,7 @@ def main(thrust,innerRadius,fuel_mass,dry_rocket_mass):
 
     # print("Apogee = ", round(height_track,3), "meters, or ", round(height_track*meters_to_feet,3), "feet.")
     print("Max velocity was ", round(velocity_track,3), "meters per second.")
-    plot_plots()
+    #plot_plots()
     return round(height_track*meters_to_feet,3)
 
 # apogee = main(4400,3.5)

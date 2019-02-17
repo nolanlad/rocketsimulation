@@ -22,7 +22,7 @@ def design(pC,disp = False):
     minT = 1
     res = .01
     #nozzle and throat characteristics from my code
-    epsilon,dT,dE = nozz.dims(pC,False)
+    epsilon,dT,dE = nozz.dims(pC,disp)
     rE,rT = dE/2,dT/2
     lN = .8*(rT*(np.sqrt(epsilon)-1))/np.tan(np.deg2rad(15))
     tN,tE = tNF(epsilon),tEF(epsilon)
@@ -84,7 +84,8 @@ def design(pC,disp = False):
         plt.plot(xNet,yNet)
         plt.plot(xInterp,yInterp)
     if(disp):
-        print(max(yNet) * 2, "cm chamber/exit diameter", min(yNet)*2, " cm throat diameter", lCh, "cm chamber length")
+       #plot()
+       pass
     return xInterp,yInterp
 
 

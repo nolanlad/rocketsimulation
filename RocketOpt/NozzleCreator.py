@@ -21,7 +21,7 @@ def dims(pChamber,disp):
     exitAreaRatio = 1/((((k+1)/2)**(1/(k-1)))*((pOut/pChamber)**(1/k))*np.sqrt(((k+1)/(k-1))*(1-((pOut/pChamber)**((k-1)/k)))))
     minChamberArea = 4 * throatArea #book says 3 for appreciable pressure drop, 4 for appreciable chamber velocity
     mDot = desiredThrust/(ISP*g)
-    if(disp == True):
+    if(False):
         print("expansion ratio is ", exitAreaRatio)
         print("throat area is ", throatArea*10000, "cm^2 at tcoeff = ", tCoeff)
         print("exit area is", (throatArea*exitAreaRatio)*10000,"cm^2 and chamber area should be at least ",minChamberArea*10000,"cm^2")

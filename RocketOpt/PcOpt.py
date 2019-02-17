@@ -20,6 +20,7 @@ def pcOpt(cPress,mass,diameter,moreData = False):
     It = 4.44822*It #Total Impulse (Ns)
     MR = 2.6 #mixture ratio = mdot_o/mdot_f @Pc=25atm #http://www.braeunig.us/space/comb-OM.htm
     
+    parameters,values = [],[]
     #pcD = np.array([200,400,600,800,1000]) data for cnst o/f of 2.8
     #IspD = np.array([2479.3,2736.5,2863.9,2945.6,3004.6])
     #f = np.polyfit(pcD,IspD,4)
@@ -58,6 +59,10 @@ def pcOpt(cPress,mass,diameter,moreData = False):
         Vo = mo/1141 #ox volume (density of liquid oxygen = 1141 kg/m**3)
         Vf = mf/425.6 #fuel volume (density of liquid methane = 425.6 kg/m**3)
         mp = mo+mf #propellant mass
+        if(disp):
+            parameters.extend(["Mass of Fuel (kg)","Mass of Oxidiser","Mass of Propellants",
+                               "Volume of Fuel (l)","Volume of Oxidiser","Volume of Propellants","Mdot (kg/s)"])
+            values.extend([mf,mo,mp,Vf*1000,Vo*1000,(Vf+Vo)*1000,mp/(9208/Isp)])
         return mp,Vo,Vf
     
     def propellantTanksMass(oxVol, methVol, disp = False):
@@ -74,8 +79,8 @@ def pcOpt(cPress,mass,diameter,moreData = False):
         mft = V_ft*rho_al #fuel tank mass
         mt = mot+mft #total tank mass
         if(disp):
-            print(mt," kg tanks", th_t, " thick tanks")
-            print(V_ft+V_ot, " m^3 mdot", mp/(9208/700), "kg/s")
+            parameters.extend(["Oxidiser Tank Mass (kg)","Fuel Tank Mass","Total Tank Mass","Tank Thickness(cm)"])
+            values.extend([mot,mft,mt,th_t*100])
         return mt
     
     def pressurizingSysMass(oxVol,methVol,disp = False):
@@ -92,8 +97,8 @@ def pcOpt(cPress,mass,diameter,moreData = False):
             mHe.append((vHe*pHe/(rHe*300))*4)
             mtHe.append((vOut-vHe) * rho_al)
         if(disp):
-            print(vHe," m^3 helium volume pressure ", pHe, " tank vol ", vOut)
-            print(mHe, " kg he ", mtHe, " kg He Tanks")
+            parameters.extend(["He Volume(l)","He Pressure (MPA)","He Tank Mass(kg)","He Mass"])
+            values.extend([vHe,pHe,mtHe,mHe])
         return mtHe + mHe
 
     def engineMass(disp = False):
@@ -111,7 +116,8 @@ def pcOpt(cPress,mass,diameter,moreData = False):
             mEng.append(vEng * rho_cu)
             tEng.append(engineThickness)
         if(disp):
-            print(mEng, "kg engine mass ", tEng, " cm thick ")
+            parameters.extend(["Engine Mass (kg)","Engine Thickness (cm)","Exit Diameter","Throat Diameter","Engine Length","Chamber Length"])
+            values.extend([mEng,tEng,2*max(yD),2*min(yD),max(xD)-min(xD),xD[np.argmin(yD)]-xD[0]])
         return mEng
     
     apogee = []
@@ -127,10 +133,15 @@ def pcOpt(cPress,mass,diameter,moreData = False):
     if(not moreData):
         return apogee[0]
     else:
+        parameters.extend(["Apogee (ft)","Dry Mass(lb)","Wet Mass","Isp (s)"])
+        values.extend([apogee,dryMass*2.2,wetMass*2.2,Isp/9.8])
+        print("       Parameter        |     Value     ")
+        for parameter, value in list(zip(parameters, values)):
+            print(parameter + " "*(24-len(parameter))+"| " + str(value))
         return apogee,dryMass * 2.2,wetMass*2.2,Isp/9.8
 
 
-print(pcOpt(300,45,6.5,moreData=True)) 
+pcOpt(300,45,6.5,moreData=True) 
 
 
 #print(v1.main(3114,3.25,16.3,25))   
