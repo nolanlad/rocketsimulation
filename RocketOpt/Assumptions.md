@@ -11,3 +11,9 @@
   * Yield stress of Copper taken at 700K  
 
  
+
+
+sub
+8,5,2,1.5,1.1
+sup
+1.1,1.5,2,5,8

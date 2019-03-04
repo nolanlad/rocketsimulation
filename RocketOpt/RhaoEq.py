@@ -7,9 +7,10 @@ Created on Tue Jan 29 23:33:31 2019
 import numpy as np
 import matplotlib.pyplot as plt
 import NozzleCreator as nozz
+import csv
 
 #####Data and Rhao process from http://www.aspirespace.org.uk/downloads/Thrust%20optimised%20parabolic%20nozzle.pdf
-def design(pC,disp = False):
+def design(pC,disp = False,reso = .01):
     #Data 
     eRat = np.array([3.5,4,5,6,7,8,9,10,20])
     tNData = np.array([19.8,21.6,23,24,24.8,25.3,26,27.2,28.9])
@@ -77,24 +78,28 @@ def design(pC,disp = False):
     xNet = np.concatenate((xC,x,x1,x2))
     yNet = np.concatenate((yC,y,y1,y2))
     
-    xInterp = np.arange(xC[0],x2[-1],.01)
+    xInterp = np.arange(xC[0],x2[-1],reso)
     yInterp = np.interp(xInterp,xNet,yNet)
     def plot():
         plt.figure(1)
         plt.plot(xNet,yNet)
         plt.plot(xInterp,yInterp)
+#        plt.plot(xInterp,(yInterp/min(yInterp))**2)
     if(disp):
-       #plot()
+       plot()
        pass
     return xInterp,yInterp
 
 
-#
-#file = open("Nozzle.txt","w")
-#file.write("%x\n")
-#for i in xNet:
-#    file.write(str(i) + " ")
-#file.write("\n%y\n")
-#for i in yNet:
-#    file.write(str(i) + " ")
+
+
+xVals,yVals = design(550,reso=.1)
+xVals *= .01
+xVals -= xVals[0]
+yVals *= .01
+
+with open('Nozzle550psi.csv',mode='w',newline='') as nozzFile:
+    writer = csv.writer(nozzFile)
+    writer.writerow(xVals)
+    writer.writerow(yVals)
 
