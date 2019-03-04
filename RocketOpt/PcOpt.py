@@ -48,6 +48,7 @@ def pcOpt(cPress,mass,diameter,moreData = False):
     s_cu = 70 * 10**6 #at 700k
     rho_cu = 8933 * 10**-6 #kg/m^3 to kg/cm^3
         #http://www.matweb.com/search/datasheet_print.aspx?matguid=1b8c06d0ca7c456694c7777d9e10be5b
+    
     def propellantsMassVols(disp = False):
         mp = (It)/Isp #propellant mass
         mf = mp/(1+MR) #fuel mass
@@ -59,7 +60,7 @@ def pcOpt(cPress,mass,diameter,moreData = False):
             parameters.extend(["Mass of Fuel (kg)","Mass of Oxidiser","Mass of Propellants",
                                "Volume of Fuel (l)","Volume of Oxidiser","Volume of Propellants","Mdot (kg/s)"])
             values.extend([mf,mo,mp,Vf*1000,Vo*1000,(Vf+Vo)*1000,mp/(9208/Isp)])
-        return mp,Vo,Vf
+        return mp,Vo,Vf,mo,mf
     
     def propellantTanksMass(oxVol, methVol, disp = False):
         th_t = (pr*(d/2))/(s_al) #thickness of prop/ox tanks required
@@ -111,13 +112,15 @@ def pcOpt(cPress,mass,diameter,moreData = False):
             vEng = vOut - vIn 
             mEng.append(vEng * rho_cu)
             tEng.append(engineThickness)
+            print("SA", np.pi*np.trapz(yD,xD))
+            print(vIn)
         if(disp):
             parameters.extend(["Engine Mass (kg)","Engine Thickness (cm)","Exit Diameter","Throat Diameter","Engine Length","Chamber Length"])
             values.extend([mEng,tEng,2*max(yD),2*min(yD),max(xD)-min(xD),xD[np.argmin(yD)]-xD[0]])
         return mEng
     
     apogee = []
-    mp,oxVol,methVol = propellantsMassVols(disp=moreData)
+    mp,oxVol,methVol,oxMass,methMass = propellantsMassVols(disp=moreData)
     mt = propellantTanksMass(oxVol,methVol,disp=moreData)
     #mHe = pressurizingSysMass(oxVol,methVol,disp=True)
     mEng = engineMass(disp=moreData)
