@@ -8,8 +8,8 @@ import numpy as np
 import mars_rocketsim as v1
 import RhaoEq as nProf
 import scipy.optimize as opt
-
-
+import tank_solution
+import matplotlib.pyplot as plt
 
 #inputs in psi,lb,in
 def pcOpt(cPress,mass,diameter,moreData = False):
@@ -63,26 +63,26 @@ def pcOpt(cPress,mass,diameter,moreData = False):
             parameters.extend(["Mass of Fuel (kg)","Mass of Oxidiser","Mass of Propellants",
                                "Volume of Fuel (l)","Volume of Oxidiser","Volume of Propellants","Mdot (kg/s)"])
             values.extend([mf,mo,mp,Vf*1000,Vo*1000,(Vf+Vo)*1000,mp/(9208/700)])
-        return mp,Vo,Vf
+        return mf,mo,Vo,Vf
     
-    def propellantTanksMass(oxVol, methVol, disp = False):
-        th_t = (pr*(d/2))/(s_al) #thickness of prop/ox tanks required
-        
-        A_t = np.pi*((d/2)-th_t)**2 #inner cross sectional area for fuel and ox
-        l_ot = oxVol/A_t #length of ox tank
-        l_ft = methVol/A_t #length of fuel tank
-        
-        V_ot = 2*(np.pi*(d/2)**2)*th_t + (np.pi*((d/2)**2-(d/2-th_t)**2))*l_ot #material volume of ox tank
-        V_ft = 2*(np.pi*(d/2)**2)*th_t + (np.pi*((d/2)**2-(d/2-th_t)**2))*l_ft #material volume of fuel tank
-        
-        mot = V_ot*rho_al #ox tank mass
-        mft = V_ft*rho_al #fuel tank mass
-        mt = mot+mft #total tank mass
-        if(disp):
-            parameters.extend(["Oxidiser Tank Mass (kg)","Fuel Tank Mass","Total Tank Mass","Tank Thickness(cm)"])
-            values.extend([mot,mft,mt,th_t*100])
-        return mt
-    
+#    def propellantTanksMass(oxVol, methVol, disp = False):
+#        th_t = (pr*(d/2))/(s_al) #thickness of prop/ox tanks required
+#        
+#        A_t = np.pi*((d/2)-th_t)**2 #inner cross sectional area for fuel and ox
+#        l_ot = oxVol/A_t #length of ox tank
+#        l_ft = methVol/A_t #length of fuel tank
+#        
+#        V_ot = 2*(np.pi*(d/2)**2)*th_t + (np.pi*((d/2)**2-(d/2-th_t)**2))*l_ot #material volume of ox tank
+#        V_ft = 2*(np.pi*(d/2)**2)*th_t + (np.pi*((d/2)**2-(d/2-th_t)**2))*l_ft #material volume of fuel tank
+#        
+#        mot = V_ot*rho_al #ox tank mass
+#        mft = V_ft*rho_al #fuel tank mass
+#        mt = mot+mft #total tank mass
+#        if(disp):
+#            parameters.extend(["Oxidiser Tank Mass (kg)","Fuel Tank Mass","Total Tank Mass","Tank Thickness(cm)"])
+#            values.extend([mot,mft,mt,th_t*100])
+#        return mt
+#    
     def pressurizingSysMass(oxVol,methVol,disp = False):
         mtHe = []
         mHe = []
@@ -102,7 +102,7 @@ def pcOpt(cPress,mass,diameter,moreData = False):
         return mtHe + mHe
     
     rhoAb = 1100 #density(kg/m^3) estimate for carbon layer 
-    abThickness = 0.4 #thickness (cm) estimate, 
+    abThickness = 0 #thickness (cm) estimate, 
     #above data from https://ocw.mit.edu/courses/aeronautics-and-astronautics/16-512-rocket-propulsion-fall-2005/lecture-notes/lecture_10.pdf
     def engineMass(disp = False):
         mEng = []
@@ -138,15 +138,19 @@ def pcOpt(cPress,mass,diameter,moreData = False):
         return mEng + mAb
     
     apogee = []
-    mp,oxVol,methVol = propellantsMassVols(disp=moreData)
-    mt = propellantTanksMass(oxVol,methVol,disp=moreData)
+    methM,oxM,oxVol,methVol = propellantsMassVols(disp=moreData)
     #mHe = pressurizingSysMass(oxVol,methVol,disp=True)
     mEng = engineMass(disp=moreData)
+    coaxTank = tank_solution.TankSolution(pc[0],methM[0],oxM[0],disp=moreData)
+    mt = (coaxTank.mass_tank_lox + coaxTank.mass_tank_meth)/2.2
+    if(moreData):
+        parameters.extend(["Lox Tank Mass (kg)","Meth Tank Mass"])
+        values.extend([coaxTank.mass_tank_lox/2.2,coaxTank.mass_tank_meth/2.2])
     for i in range(0,len(pc)):
-        apogee.append(v1.main(3114,diameter/2,mp[i],nPropMass+mt[i]+mEng[i]))#+mHe[i]))
+        apogee.append(v1.main(3114,diameter/2,methM[i] + oxM[i],nPropMass+mt+mEng[i]))
 
-    dryMass =  nPropMass+mt[0]+mEng[0] #+mHe[0]
-    wetMass = dryMass + mp[0]
+    dryMass =  nPropMass+mt+mEng[0] #+mHe[0]
+    wetMass = dryMass + methM[i] + oxM[i]
     if(not moreData):
         return apogee[0]
     else:
@@ -158,7 +162,7 @@ def pcOpt(cPress,mass,diameter,moreData = False):
         return apogee,dryMass * 2.2,wetMass*2.2,Isp/9.8
 
 
-pcOpt(300,45.09,6.5,moreData=True) 
+pcOpt(300,41.5,6.5,moreData=True) 
 
 
 #print(v1.main(3114,3.25,16.3,25))   
