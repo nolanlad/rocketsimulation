@@ -93,8 +93,8 @@ def main(thrust_lbf,innerRadius_in,fuel_mass_lb,dry_rocket_mass_lb):
 
         G=1.45e6; #Effective Shear Modulus
         Length1=24
-        Length2=16
-        Thickness=.23
+        Length2=20
+        Thickness=.22
         Base=8.4
         S=(Length1+Length2)/2*Base
         AR=Base**2/S
